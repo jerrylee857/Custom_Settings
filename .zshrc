@@ -100,13 +100,19 @@ source $ZSH/oh-my-zsh.sh
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 
-export http_proxy=http://127.0.0.1:10809
-export https_proxy=http://127.0.0.1:10809
 
+#自定义配置
+
+#本地windows中的代理设置
+#export http_proxy=http://127.0.0.1:10809
+#export https_proxy=http://127.0.0.1:10809
+
+#加速pyenv下载python的源设置
 export PYTHON_BUILD_MIRROR_URL_SKIP_CHECKSUM=1
 export PYTHON_BUILD_MIRROR_URL="https://registry.npmmirror.com/-/binary/python"
 
-#主题、git、虚拟环境显示自定义
+
+#下面是zsh主题、自动检测git、虚拟环境的自动开启与关闭、代码执行用时、windows terminal选项卡标题的自动更新等配置
 
 # Git相关配置
 # 这个函数用于显示 git 的状态，即 √ 或 x
@@ -114,9 +120,9 @@ git_custom_status() {
     if git rev-parse --is-inside-work-tree &>/dev/null; then
         local STATUS="$(git status --porcelain 2> /dev/null)"
         if [[ -z $STATUS ]]; then
-            echo "%{$fg_bold[green]%} ✔%{$reset_color%}"
+            echo "%{$fg_bold[green]%}✔%{$reset_color%}"
         else
-            echo "%{$fg_bold[red]%} ✘%{$reset_color%}"
+            echo "%{$fg_bold[red]%}✘%{$reset_color%}"
         fi
     fi
 }
@@ -125,37 +131,6 @@ ZSH_THEME_GIT_PROMPT_DIRTY=""
 
 # 虚拟环境相关配置
 export VIRTUAL_ENV_DISABLE_PROMPT=1
-
-# 主题及提示符配置
-PROMPT='╭─%{$fg_bold[green]%}%n%{$reset_color%}@%{$fg_bold[green]%}%m %{$fg_bold[red]%}%~ $(git_prompt_info)$(git_custom_status)  %{$fg_bold[blue]%}%*%{$reset_color%}
-╰─$%{$fg[magenta]%}${VIRTUAL_ENV:+(`basename $VIRTUAL_ENV`)}%{$reset_color%} '
-
-
-
-#windows terminal中选项卡的动态更新
-# 在执行命令前捕获命令并更新标题
-preexec() {
-    local cmd="$1"
-    # 如果命令是常见的简短命令，则直接显示
-    if [[ "$cmd" == "ls" || "$cmd" == "cd" ]]; then
-        echo -ne "\033]0;本地-$cmd\007"
-        return
-    fi
-    # 对于激活虚拟环境的命令，只显示虚拟环境的名称
-    if [[ "$cmd" =~ "source" && "$cmd" =~ "activate" ]]; then
-        cmd="venv:${cmd##*/}"
-        echo -ne "\033]0;本地-$cmd\007"
-        return
-    fi
-    # 如果命令长度超过20个字符，只显示前17个字符并加上省略号
-    if [[ ${#cmd} -gt 20 ]]; then
-        cmd="${cmd:0:17}..."
-    fi
-    # 使用 ANSI escape codes 设置终端标题
-    echo -ne "\033]0;本地-$cmd\007"
-}
-
-
 
 #自动激活与关闭虚拟环境
 auto_venv() {
@@ -194,3 +169,70 @@ auto_venv() {
 # 将 auto_venv 函数挂钩至目录改变时的事件
 autoload -U add-zsh-hook
 add-zsh-hook chpwd auto_venv
+
+
+#代码执行用时脚本与windows terminal中选项卡的自动捕获与更新（preexec函数只能合二为一否则windows terminal标题更新出错）
+# 合并后的 preexec 函数
+preexec() {
+    local cmd="$1"
+
+    # 设置命令开始执行的时间
+    start_time=$EPOCHREALTIME
+    # 重置 SECONDS 变量用于计算命令执行时间
+    SECONDS=0
+
+    # 如果命令是常见的简短命令，则直接显示
+    if [[ "$cmd" == "ls" || "$cmd" == "cd" ]]; then
+        echo -ne "\033]0;本地-$cmd\007"
+        return
+    fi
+
+    # 对于激活虚拟环境的命令，只显示虚拟环境的名称
+    if [[ "$cmd" =~ "source" && "$cmd" =~ "activate" ]]; then
+        cmd="venv:${cmd##*/}"
+        echo -ne "\033]0;本地-$cmd\007"
+        return
+    fi
+
+    # 如果命令长度超过20个字符，只显示前17个字符并加上省略号
+    if [[ ${#cmd} -gt 20 ]]; then
+        cmd="${cmd:0:17}..."
+    fi
+
+    # 使用 ANSI escape codes 设置终端标题
+    echo -ne "\033]0;本地-$cmd\007"
+}
+
+# 在命令执行之后计算用时并存储到全局变量中
+precmd() {
+    use_time=$(print_use_time)
+    SECONDS=0
+}
+
+# 打印用时的函数，增加毫秒的精度，并根据执行时间的长短来调整显示格式
+print_use_time() {
+    local end_time=$EPOCHREALTIME
+    # 使用 awk 进行浮点数计算
+    local elapsed_time=$(awk "BEGIN {print $end_time - $start_time}")
+    local total_seconds=$(awk "BEGIN {printf \"%.1f\", $elapsed_time}")
+
+    # 对于非常短的命令执行时间，直接以秒显示
+    if (( $(awk "BEGIN {print ($total_seconds < 60) ? 1 : 0}") )); then
+        echo "命令执行用时${total_seconds}s"
+    else
+        local hours=$(awk "BEGIN {print int($total_seconds/3600)}")
+        local minutes=$(awk "BEGIN {print int(($total_seconds/60)%60)}")
+        local seconds=$(awk "BEGIN {printf \"%.1f\", $total_seconds%60}")
+        local formatted_duration="命令执行用时"
+
+        [[ $hours -gt 0 ]] && formatted_duration+="${hours}h"
+        [[ $minutes -gt 0 ]] && formatted_duration+="${minutes}m"
+        formatted_duration+="${seconds}s"
+
+        echo $formatted_duration
+    fi
+}
+
+#终端提示符：包含zsh主题，git检测，python虚拟环境名称，命令执行用时检测，时间戳等信息
+PROMPT='╭─%{$fg_bold[green]%}%n@%m %{$fg_bold[red]%}%~ $(git_prompt_info)$(git_custom_status)%{${reset_color}%} ${use_time}     %{%F{yellow}%}%*%{$reset_color%}
+╰─$%{$fg[magenta]%}${VIRTUAL_ENV:+(`basename $VIRTUAL_ENV`)}%{$reset_color%} '
