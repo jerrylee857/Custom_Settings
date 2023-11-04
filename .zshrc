@@ -205,34 +205,38 @@ preexec() {
 
 # 在命令执行之后计算用时并存储到全局变量中
 precmd() {
-    use_time=$(print_use_time)
-    SECONDS=0
+    if [[ -n $start_time ]]; then
+        use_time=$(print_use_time)
+    fi
+    start_time=""  # 重置 start_time
 }
-
 # 打印用时的函数，增加毫秒的精度，并根据执行时间的长短来调整显示格式
 print_use_time() {
-    local end_time=$EPOCHREALTIME
-    # 使用 awk 进行浮点数计算
-    local elapsed_time=$(awk "BEGIN {print $end_time - $start_time}")
-    local total_seconds=$(awk "BEGIN {printf \"%.1f\", $elapsed_time}")
+    if [[ -n $start_time ]]; then
+        local end_time=$EPOCHREALTIME
+        # 使用 awk 进行浮点数计算
+        local elapsed_time=$(awk "BEGIN {print ($end_time - $start_time)}")
+        local total_seconds=$(awk "BEGIN {printf \"%.1f\", ($elapsed_time)}")
 
-    # 对于非常短的命令执行时间，直接以秒显示
-    if (( $(awk "BEGIN {print ($total_seconds < 60) ? 1 : 0}") )); then
-        echo "命令执行用时${total_seconds}s"
+        # 对于非常短的命令执行时间，直接以秒显示
+        if (( $(awk "BEGIN {print ($total_seconds < 60) ? 1 : 0}") )); then
+            echo "命令执行用时${total_seconds}s"
+        else
+            local hours=$(awk "BEGIN {print int($total_seconds/3600)}")
+            local minutes=$(awk "BEGIN {print int(($total_seconds/60)%60)}")
+            local seconds=$(awk "BEGIN {printf \"%.1f\", ($total_seconds%60)}")
+            local formatted_duration="命令执行用时"
+
+            [[ $hours -gt 0 ]] && formatted_duration+="${hours}h"
+            [[ $minutes -gt 0 ]] && formatted_duration+="${minutes}m"
+            formatted_duration+="${seconds}s"
+
+            echo $formatted_duration
+        fi
     else
-        local hours=$(awk "BEGIN {print int($total_seconds/3600)}")
-        local minutes=$(awk "BEGIN {print int(($total_seconds/60)%60)}")
-        local seconds=$(awk "BEGIN {printf \"%.1f\", $total_seconds%60}")
-        local formatted_duration="命令执行用时"
-
-        [[ $hours -gt 0 ]] && formatted_duration+="${hours}h"
-        [[ $minutes -gt 0 ]] && formatted_duration+="${minutes}m"
-        formatted_duration+="${seconds}s"
-
-        echo $formatted_duration
+        echo ""
     fi
 }
-
 #终端提示符：包含zsh主题，git检测，python虚拟环境名称，命令执行用时检测，时间戳等信息
 PROMPT='╭─%{$fg_bold[green]%}%n@%m %{$fg_bold[red]%}%~ $(git_prompt_info)$(git_custom_status)%{${reset_color}%} ${use_time}     %{%F{yellow}%}%*%{$reset_color%}
 ╰─$%{$fg[magenta]%}${VIRTUAL_ENV:+(`basename $VIRTUAL_ENV`)}%{$reset_color%} '
