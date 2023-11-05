@@ -114,10 +114,7 @@ if command -v pyenv 1>/dev/null 2>&1; then
 fi
 eval "$(pyenv virtualenv-init -)"
 
-#当从本地连接到wsl时 自动切换到~目录
-cd ~
-
-#WSL代理设置
+#代理设置（适用于WSL或者NAT网络模式下的VM虚拟机)
 #host_ip=$(cat /etc/resolv.conf |grep "nameserver" |cut -f 2 -d " ")
 #export http_proxy="http://$host_ip:10809"
 #export https_proxy="https://$host_ip:10809"
@@ -180,14 +177,16 @@ auto_venv() {
     fi
   fi
 }
+
 # 将 auto_venv 函数挂钩至目录改变时的事件(在使用pyenv-virtualenv时存在提示语报错的问题，先禁用这个功能）
 #autoload -U add-zsh-hook
 #add-zsh-hook chpwd auto_venv
 
+
 #代码执行用时脚本与windows terminal中选项卡的自动捕获与更新（preexec函数只能合二为一否则windows terminal标题更新出错）
 # 合并后的 preexec 函数
 #动态更新windows terminal中的选项卡标题
-export TERMINAL_TYPE="WSL"
+export TERMINAL_TYPE="SSH-vwu2004d"
 preexec() {
     local cmd="$1"
 
@@ -217,7 +216,7 @@ preexec() {
     # 使用 ANSI escape codes 设置终端标题
     echo -ne "\033]0;${TERMINAL_TYPE}-$cmd\007"
 }
-alias exit='echo -ne "\033]0;WSL Disconnected\007"; exit'
+alias exit='echo -ne "\033]0;SSH Disconnected\007"; exit'
 # 在命令执行之后计算用时并存储到全局变量中
 precmd() {
     if [[ -n $start_time ]]; then
