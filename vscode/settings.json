@@ -1,0 +1,36 @@
+{
+    "terminal.integrated.defaultProfile.windows": "Git Bash",
+    "window.zoomLevel": 1,
+    "chatgpt.lang": "cn",
+    "workbench.startupEditor": "none",
+    "terminal.integrated.profiles.windows": {
+        "PowerShell": {
+            "source": "PowerShell",
+            "icon": "terminal-powershell"
+        },
+        "Command Prompt": {
+            "path": [
+                "${env:windir}\\Sysnative\\cmd.exe",
+                "${env:windir}\\System32\\cmd.exe"
+            ],
+            "args": [],
+            "icon": "terminal-cmd"
+        },
+    },
+    "terminal.integrated.enableMultiLinePasteWarning": false,
+    "remote.SSH.path": "C:\\Program Files\\Git\\usr\\bin\\ssh.exe",
+    "remote.SSH.remotePlatform": {
+        "azure4": "linux",
+        "hw": "linux",
+        "本地win10_ubuntu2004": "linux",
+        "vwu2004d(192.168.1.117)": "linux",
+        "vwu20stest(192.168.1.136)": "linux",
+        "vwu2004d(192.168.0.117)": "linux",
+        "vwu2004d": "linux"
+    },
+    "workbench.iconTheme": "material-icon-theme",
+    "workbench.colorTheme": "Copilot Theme - Higher Contrast",
+    "terminal.integrated.allowChords": false,
+    "security.workspace.trust.untrustedFiles": "open",
+    "terminal.integrated.shellIntegration.suggestEnabled": true,
+}
