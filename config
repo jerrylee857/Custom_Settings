@@ -1,0 +1,70 @@
+Host vwu2004d
+  HostName 192.168.0.117
+  User lee
+  User lee
+  IdentityFile ~/.ssh/id_ed25519
+  ForwardX11 yes
+  ForwardX11Trusted yes
+
+Host vwu20stest
+  HostName 192.168.1.136
+  User kele
+  IdentityFile ~/.ssh/id_ed25519
+
+Host 本地win10_ubuntu2004
+  HostName 192.168.1.128
+  User lwg2004
+  Port 22
+  IdentityFile ~/.ssh/id_ed25519
+  ForwardX11 yes
+  ForwardX11Trusted yes
+
+
+Host hw
+  HostName 110.41.13.209
+  User hwlwg2004
+  Port 23556
+  IdentityFile ~/.ssh/id_ed25519
+  ForwardX11 yes
+  ForwardX11Trusted yes
+  
+Host azure4
+  HostName 20.210.231.84
+  User azure4
+  Port 23556
+  IdentityFile ~/.ssh/id_ed25519
+  
+
+Host vbu20s
+  HostName 192.168.1.888
+  User lee
+  IdentityFile ~/.ssh/id_ed25519
+  ForwardX11 yes
+  ForwardX11Trusted yes
+
+Host vbu20test
+  HostName 192.168.1.999
+  User jerry
+  IdentityFile ~/.ssh/id_ed25519
+
+Host xxx(192.168.1.139)
+  HostName 192.168.1.139
+  User hobo
+  IdentityFile ~/.ssh/id_ed25519
+  ForwardX11 yes
+  ForwardX11Trusted yes
+
+
+Host VMmacOS
+  HostName 192.168.1.15
+  User maclee
+  Port 22
+  IdentityFile ~/.ssh/id_ed25519
+  
+Host 配置了代理
+  HostName 124.220.209.170
+  User root
+  IdentityFile ~/.ssh/id_ed25519
+  
+  ProxyCommand G:\nmap\ncat.exe -x localhost:10808 %h %p
+  ProxyCommand G:\Git\mingw64\bin\connect.exe -S 127.0.0.1:10808 %h %p
