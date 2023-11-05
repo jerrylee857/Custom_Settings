@@ -1,3 +1,6 @@
+╰─$ cat ~/.zshrc
+#自定义加载用时分析
+#zmodload zsh/zprof
 # If you come from bash you might have to change your $PATH.
 # export PATH=$HOME/bin:/usr/local/bin:$PATH
 
@@ -70,9 +73,10 @@ DISABLE_AUTO_TITLE="true"
 # Custom plugins may be added to $ZSH_CUSTOM/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-plugins=(git zsh-autosuggestions zsh-syntax-highlighting z vscode fzf)
+plugins=(git zsh-autosuggestions zsh-syntax-highlighting z )
 
 source $ZSH/oh-my-zsh.sh
+
 
 # User configuration
 
@@ -240,3 +244,26 @@ print_use_time() {
 #终端提示符：包含zsh主题，git检测，python虚拟环境名称，命令执行用时检测，时间戳等信息
 PROMPT='╭─%{$fg_bold[green]%}%n@%m %{$fg_bold[red]%}%~ $(git_prompt_info)$(git_custom_status)%{${reset_color}%} ${use_time}     %{%F{yellow}%}%*%{$reset_color%}
 ╰─$%{$fg[magenta]%}${VIRTUAL_ENV:+(`basename $VIRTUAL_ENV`)}%{$reset_color%} '
+
+
+# 用于初始化自动补全系统的函数
+autoload -Uz compinit
+
+# 设定一个样式，当你首次使用补全功能时才调用 compinit
+zstyle ':completion:*' initializer compinit
+
+#延迟加载历史记录
+autoload -Uz add-zsh-hook
+
+# 定义一个函数，用于加载历史记录
+load_history() {
+    fc -R $HISTFILE
+    # 移除钩子以避免再次加载
+    add-zsh-hook -d precmd load_history
+}
+
+# 添加钩子，当第一次显示提示符时，加载历史记录
+add-zsh-hook precmd load_history
+
+#自定义加载用时分析
+#zprof
