@@ -33,7 +33,7 @@ zinit ice lucid wait='1' atclone='!' atpull='!'
 zinit snippet OMZ::plugins/git/git.plugin.zsh
 
 # 加载 Oh My Zsh的bira主题
-zinit ice from"gh-r" as"theme" pick"themes/bira.zsh-theme" atclone='!' atpull='!'
+zinit ice from"gh" as"theme" pick"themes/bira.zsh-theme"
 zinit load robbyrussell/oh-my-zsh
 
 # 适用于windwos主机中的bash/zsh终端的代理设置
