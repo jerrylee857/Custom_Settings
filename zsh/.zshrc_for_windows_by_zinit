@@ -1,0 +1,52 @@
+export ZINIT="$HOME/.zinit"
+source $ZINIT/bin/zi.zsh
+
+# 语法高亮
+zinit ice lucid wait='0' atinit='zpcompinit'
+zinit light zdharma/fast-syntax-highlighting
+
+# 自动建议
+zinit ice lucid wait="0" atload='_zsh_autosuggest_start'
+zinit light zsh-users/zsh-autosuggestions
+
+# 补全
+zinit ice lucid wait='0'
+zinit light zsh-users/zsh-completions
+
+#快速跳转目录
+zinit ice wait"2" lucid nocd
+zinit light rupa/z
+
+# 加载 OMZ 框架及部分插件
+zinit snippet OMZ::lib/completion.zsh
+zinit snippet OMZ::lib/history.zsh
+zinit snippet OMZ::lib/key-bindings.zsh
+zinit snippet OMZ::lib/theme-and-appearance.zsh
+zinit snippet OMZ::plugins/colored-man-pages/colored-man-pages.plugin.zsh
+zinit snippet OMZ::plugins/sudo/sudo.plugin.zsh
+
+
+zinit ice lucid wait='1'
+zinit snippet OMZ::plugins/git/git.plugin.zsh
+
+# 从 Oh My Zsh 直接加载 bira 主题
+zinit ice from"gh-r" as"theme" pick"themes/bira.zsh-theme"
+zinit load robbyrussell/oh-my-zsh
+
+#针对bira主题必需的函数
+function ruby_prompt_info() {
+}
+
+function git_prompt_info() {
+}
+
+function hg_prompt_info() {
+}
+
+function virtualenv_prompt_info() {
+}
+
+#代理设置
+#本地windows中的代理设置
+export http_proxy=http://127.0.0.1:10809
+export https_proxy=http://127.0.0.1:10809
