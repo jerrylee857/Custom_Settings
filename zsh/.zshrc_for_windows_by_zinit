@@ -1,4 +1,6 @@
+#zsh自带性能分析工具（必须放在.zshrc最前面）
 #zmodload zsh/zprof
+
 # Set Zinit location
 export ZINIT="$HOME/.zinit"
 source $ZINIT/bin/zi.zsh
@@ -139,6 +141,7 @@ precmd() {
     fi
     start_time=""  # 重置 start_time
 }
+
 # 打印用时的函数，增加毫秒的精度，并根据执行时间的长短来调整显示格式
 print_use_time() {
     if [[ -n $start_time ]]; then
@@ -149,12 +152,12 @@ print_use_time() {
 
         # 对于非常短的命令执行时间，直接以秒显示
         if (( $(awk "BEGIN {print ($total_seconds < 60) ? 1 : 0}") )); then
-            echo "命令执行用时${total_seconds}s"
+            echo "take ${total_seconds}s"  # 在 "take" 和 "$total_seconds" 之间加了一个空格
         else
             local hours=$(awk "BEGIN {print int($total_seconds/3600)}")
             local minutes=$(awk "BEGIN {print int(($total_seconds/60)%60)}")
             local seconds=$(awk "BEGIN {printf \"%.1f\", ($total_seconds%60)}")
-            local formatted_duration="命令执行用时"
+            local formatted_duration="take "  # 在 "take" 后加了一个空格
 
             [[ $hours -gt 0 ]] && formatted_duration+="${hours}h"
             [[ $minutes -gt 0 ]] && formatted_duration+="${minutes}m"
@@ -167,18 +170,15 @@ print_use_time() {
     fi
 }
 
-#终端提示符配置：包含zsh主题，git检测，python虚拟环境名称，命令执行用时检测，时间戳等信息
-PROMPT='╭─%{$fg_bold[green]%}%n@%m %{$fg_bold[red]%}%~ $(git_prompt_info)$(git_custom_status)%{${reset_color}%} ${use_time}     %{%F{yellow}%}%*%{$reset_color%}
-╰─$%{$fg[magenta]%}${VIRTUAL_ENV:+(`basename $VIRTUAL_ENV`)}%{$reset_color%} '
-
-
-# 依赖于bira主题的四个函数，这里留空，只为确保zsh不报错，无其他作用
+# 依赖于bira主题的四个函数，这里只放git_prompt_info函数，其他留空。只为确保zsh不报错，无其他作用
 function ruby_prompt_info() {
     # Your function definition here...
 }
 
 function git_prompt_info() {
-  # Your function definition here...
+  ref=$(command git symbolic-ref HEAD 2> /dev/null) || \
+  ref=$(command git rev-parse --short HEAD 2> /dev/null) || return 0
+  echo "%{$fg[yellow]%}(${ref#refs/heads/})%{$reset_color%}"
 }
 
 function hg_prompt_info() {
@@ -188,4 +188,10 @@ function hg_prompt_info() {
 function virtualenv_prompt_info() {
     # Your function definition here...
 }
+
+#终端提示符配置：包含zsh主题，git检测，python虚拟环境名称，命令执行用时检测，时间戳等信息
+PROMPT='╭─%{$fg_bold[green]%}%n@%m %{$fg_bold[red]%}%~ $(git_prompt_info)$(git_custom_status)%{   %}%F{cyan}${use_time}%f   %F{yellow}UTC+8 %*%f
+╰─$%F{cyan}${VIRTUAL_ENV:+(`basename $VIRTUAL_ENV`)}%f '
+
+#zsh自带性能分析工具（必须放在zshrc最后面）
 #zprof
