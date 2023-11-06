@@ -6,7 +6,7 @@ export ZINIT="$HOME/.zinit"
 source $ZINIT/bin/zi.zsh
 
 # 语法高亮
-zinit ice lucid wait='0' atinit='zpcompinit' atclone='!' atpull='!'
+zinit ice lucid wait='3' atinit='zpcompinit' atclone='!' atpull='!'
 zinit light zdharma/fast-syntax-highlighting
 
 # 自动建议
@@ -102,6 +102,26 @@ auto_venv() {
 autoload -U add-zsh-hook
 add-zsh-hook chpwd auto_venv
 
+# 命令执行状态指示器函数
+cmd_status_indicator() {
+    local color green yellow red
+    green='%F{green}'
+    yellow='%F{yellow}'
+    red='%F{red}'
+
+    # 根据上一个命令的退出状态决定颜色
+    if [ $1 -eq 0 ]; then
+        color=$green
+    elif [ $1 -eq 1 ]; then
+        color=$yellow
+    else
+        color=$red
+    fi
+
+    # 显示带颜色的实心圆点
+    echo "%{$color%}●%f"
+}
+
 #代码执行用时脚本与windows terminal中选项卡的自动捕获与更新（preexec函数只能合二为一否则windows terminal标题更新出错）
 # 合并后的 preexec 函数
 preexec() {
@@ -134,12 +154,23 @@ preexec() {
     echo -ne "\033]0;本地-$cmd\007"
 }
 
-# 在命令执行之后计算用时并存储到全局变量中
+# 计算用时和命令执行状态的变量
 precmd() {
+    # 检测上一个命令的退出状态并设置相应的颜色
+    local cmd_status_code=$?  # 使用不同的变量名保存上一个命令的退出状态
+    if [ $cmd_status_code -eq 0 ]; then
+        cmd_status="%{$fg_bold[green]%}●%{$reset_color%}"
+    elif [ $cmd_status_code -eq 1 ]; then
+        cmd_status="%{$fg_bold[yellow]%}●%{$reset_color%}"
+    else
+        cmd_status="%{$fg_bold[red]%}●%{$reset_color%}"
+    fi
+
+    # 如果有开始时间，则计算用时
     if [[ -n $start_time ]]; then
         use_time=$(print_use_time)
+        start_time=""  # 重置 start_time
     fi
-    start_time=""  # 重置 start_time
 }
 
 # 打印用时的函数，增加毫秒的精度，并根据执行时间的长短来调整显示格式
@@ -189,8 +220,8 @@ function virtualenv_prompt_info() {
     # Your function definition here...
 }
 
-#终端提示符配置：包含zsh主题，git检测，python虚拟环境名称，命令执行用时检测，时间戳等信息
-PROMPT='╭─%{$fg_bold[green]%}%n@%m %{$fg_bold[red]%}%~ $(git_prompt_info)$(git_custom_status)%{   %}%F{cyan}${use_time}%f   %F{yellow}UTC+8 %*%f
+#终端提示符配置：包含zsh主题，git检测，python虚拟环境名称，命令执行用时检测，时间戳，命令状态提示圆点等信息
+PROMPT='╭─%{$fg_bold[green]%}%n@%m %{$fg_bold[red]%}%~ $(git_prompt_info)$(git_custom_status)%{   %}%F{cyan}${use_time}%f %{${cmd_status}%}  %F{yellow}UTC+8 %*%f
 ╰─$%F{cyan}${VIRTUAL_ENV:+(`basename $VIRTUAL_ENV`)}%f '
 
 #zsh自带性能分析工具（必须放在zshrc最后面）
