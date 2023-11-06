@@ -1,33 +1,44 @@
 #zsh自带性能分析工具（必须放在.zshrc最前面）
 #zmodload zsh/zprof
 
+# zsh自带性能分析工具（必须放在.zshrc最前面）
+# zmodload zsh/zprof
+
 # Set Zinit location
 export ZINIT="$HOME/.zinit"
 source $ZINIT/bin/zi.zsh
 
-# 语法高亮 - 条件延迟加载本地插件
-zinit ice lucid wait='3' atload='!source ~/.zi/plugins/zdharma---fast-syntax-highlighting/F-Sy-H.plugin.zsh'
+# 语法高亮 - 延迟加载本地插件
+zinit ice lucid wait='3'
+zinit load ~/.zi/plugins/zdharma---fast-syntax-highlighting
 
-# 自动建议 - 条件延迟加载本地插件
-zinit ice lucid wait='0' atload='!source ~/.zi/plugins/zsh-users---zsh-autosuggestions/zsh-autosuggestions.plugin.zsh'
+# 自动建议 - 延迟加载本地插件
+zinit ice lucid wait='0'
+zinit load ~/.zi/plugins/zsh-users---zsh-autosuggestions
 
-# 补全 - 条件延迟加载本地插件
-zinit ice lucid wait='0' atload='!source ~/.zi/plugins/zsh-users---zsh-completions/zsh-completions.plugin.zsh'
+# 补全 - 延迟加载本地插件
+zinit ice lucid wait='0'
+zinit load ~/.zi/plugins/zsh-users---zsh-completions
 
-# 快速跳转目录 - 条件延迟加载本地插件
-zinit ice lucid wait='1' atload='!source ~/.zi/plugins/rupa---z/z.sh'
+# 快速跳转目录 - 延迟加载本地插件
+zinit ice lucid wait='1'
+zinit load ~/.zi/plugins/rupa---z
 
 # 加载 OMZ 框架及部分插件 - 无需延迟加载本地副本
 source ~/.zi/plugins/robbyrussell---oh-my-zsh/lib/history.zsh
 source ~/.zi/plugins/robbyrussell---oh-my-zsh/lib/key-bindings.zsh
 source ~/.zi/plugins/robbyrussell---oh-my-zsh/lib/theme-and-appearance.zsh
-# 加载 Oh My Zsh 插件 - 条件延迟加载本地插件
-zinit ice lucid wait='1' atload='!source ~/.zi/plugins/robbyrussell---oh-my-zsh/plugins/git/git.plugin.zsh'
-zinit ice lucid wait='3' atload='!source ~/.zi/plugins/robbyrussell---oh-my-zsh/plugins/sudo/sudo.plugin.zsh'
-zinit ice lucid wait='4' atload='!source ~/.zi/plugins/robbyrussell---oh-my-zsh/plugins/colored-man-pages/colored-man-pages.plugin.zsh'
+
+# 加载 Oh My Zsh 插件 - 延迟加载本地插件
+zinit ice lucid wait='1'
+zinit load ~/.zi/plugins/robbyrussell---oh-my-zsh/plugins/git
+zinit ice lucid wait='3'
+zinit load ~/.zi/plugins/robbyrussell---oh-my-zsh/plugins/sudo
+zinit ice lucid wait='4'
+zinit load ~/.zi/plugins/robbyrussell---oh-my-zsh/plugins/colored-man-pages
+
 # 加载 Oh My Zsh的bira主题 - 无需延迟加载本地副本
 source ~/.zi/plugins/robbyrussell---oh-my-zsh/themes/bira.zsh-theme
-
 
 # 当从本地连接到wsl时 自动切换到~目录
 cd ~
