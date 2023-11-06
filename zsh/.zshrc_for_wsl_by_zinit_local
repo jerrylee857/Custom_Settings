@@ -1,0 +1,200 @@
+#zsh自带性能分析工具（必须放在.zshrc最前面）
+#zmodload zsh/zprof
+# Set Zinit location
+export ZINIT="$HOME/.zinit"
+source $ZINIT/bin/zi.zsh
+
+# 语法高亮 - 使用本地副本
+source ~/.zi/plugins/zdharma---fast-syntax-highlighting/F-Sy-H.plugin.zsh
+
+# 自动建议 - 使用本地副本
+source ~/.zi/plugins/zsh-users---zsh-autosuggestions/zsh-autosuggestions.plugin.zsh
+
+# 补全 - 使用本地副本
+source ~/.zi/plugins/zsh-users---zsh-completions/zsh-completions.plugin.zsh
+
+# 快速跳转目录 - 使用本地副本
+source ~/.zi/plugins/rupa---z/z.sh
+
+# 加载 OMZ 框架及部分插件 - 使用本地副本
+source ~/.zi/plugins/robbyrussell---oh-my-zsh/lib/history.zsh
+source ~/.zi/plugins/robbyrussell---oh-my-zsh/lib/key-bindings.zsh
+source ~/.zi/plugins/robbyrussell---oh-my-zsh/lib/theme-and-appearance.zsh
+
+source ~/.zi/plugins/robbyrussell---oh-my-zsh/plugins/git/git.plugin.zsh
+source ~/.zi/plugins/robbyrussell---oh-my-zsh/plugins/sudo/sudo.plugin.zsh
+source ~/.zi/plugins/robbyrussell---oh-my-zsh/plugins/colored-man-pages/colored-man-pages.plugin.zsh
+
+# 加载 Oh My Zsh的bira主题 - 使用本地副本
+source ~/.zi/plugins/robbyrussell---oh-my-zsh/themes/bira.zsh-theme
+
+# 当从本地连接到wsl时 自动切换到~目录
+cd ~
+
+#常用的PATH变量
+export PYENV_ROOT="$HOME/.pyenv"
+export PATH="$PYENV_ROOT/bin:$PATH"
+if command -v pyenv 1>/dev/null 2>&1; then
+  eval "$(pyenv init --path)"
+fi
+eval "$(pyenv virtualenv-init -)"
+
+#加速pyenv下载python的源设置
+export PYTHON_BUILD_MIRROR_URL_SKIP_CHECKSUM=1
+export PYTHON_BUILD_MIRROR_URL="https://registry.npmmirror.com/-/binary/python"
+
+# WSL代理设置
+#host_ip=$(cat /etc/resolv.conf |grep "nameserver" |cut -f 2 -d " ")
+#export http_proxy="http://$host_ip:10809"
+#export https_proxy="https://$host_ip:10809"
+
+#禁止zsh终端自动更新标题
+DISABLE_AUTO_TITLE="true"
+
+# 下面是zsh主题提示符、自动检测git、虚拟环境的自动开启与关闭、代码执行用时、windows terminal选项卡标题的自动更新等配置
+# Git相关配置
+git_custom_status() {
+    if git rev-parse --is-inside-work-tree &>/dev/null; then
+        local STATUS="$(git status --porcelain 2> /dev/null)"
+        if [[ -z $STATUS ]]; then
+            echo "%{$fg_bold[green]%}✔%{$reset_color%}"
+        else
+            echo "%{$fg_bold[red]%}✘%{$reset_color%}"
+        fi
+    fi
+}
+ZSH_THEME_GIT_PROMPT_CLEAN=""
+ZSH_THEME_GIT_PROMPT_DIRTY=""
+
+# python虚拟环境自动激活与关闭相关配置
+auto_venv() {
+  local target_dir="$PWD"
+  local venv_path=""
+  local parent_dir
+
+  while [[ "$target_dir" != "/" ]]; do
+    # 搜索深度为2的Scripts目录，并忽略权限错误
+    venv_path="$(find "$target_dir" -maxdepth 2 -type d -name 'Scripts' -exec test -f '{}/activate' \; -print -quit 2>/dev/null)"
+    if [[ -n "$venv_path" ]]; then
+      break
+    fi
+    parent_dir="$(dirname "$target_dir")"
+    if [[ "$parent_dir" == "$target_dir" ]]; then
+      break
+    fi
+    target_dir="$parent_dir"
+  done
+
+  if [[ -n "$venv_path" ]]; then
+    local venv_dir="$(dirname "$venv_path")"
+    if [[ -z "$VIRTUAL_ENV" || "$VIRTUAL_ENV" != "$venv_dir" ]]; then
+      [[ -n "$VIRTUAL_ENV" ]] && deactivate
+      echo "检测到以下 Python 虚拟环境：$venv_dir 已自动激活"
+      source "$venv_path/activate"
+    fi
+  elif [[ -n "$VIRTUAL_ENV" ]]; then
+    if [[ "$PWD" != "$VIRTUAL_ENV" && "$PWD" != "$VIRTUAL_ENV"* ]]; then
+      deactivate
+      #echo "已关闭虚拟环境：$VIRTUAL_ENV"
+    fi
+  fi
+}
+# 将 auto_venv 函数挂钩至目录改变时的事件(在使用pyenv-virtualenv时存在提示语报错的问题，先禁用这个功能）
+#autoload -U add-zsh-hook
+#add-zsh-hook chpwd auto_venv
+
+#代码执行用时脚本与windows terminal中选项卡的自动捕获与更新（preexec函数只能合二为一否则windows terminal标题更新出错）
+# 合并后的 preexec 函数
+#动态更新windows terminal中的选项卡标题
+export TERMINAL_TYPE="WSL"
+preexec() {
+    local cmd="$1"
+
+    # 设置命令开始执行的时间
+    start_time=$EPOCHREALTIME
+    # 重置 SECONDS 变量用于计算命令执行时间
+    SECONDS=0
+
+    # 如果命令是常见的简短命令，则直接显示
+    if [[ "$cmd" == "ls" || "$cmd" == "cd" ]]; then
+        echo -ne "\033]0;${TERMINAL_TYPE}-$cmd\007"
+        return
+    fi
+
+    # 对于激活虚拟环境的命令，只显示虚拟环境的名称
+    if [[ "$cmd" =~ "source" && "$cmd" =~ "activate" ]]; then
+        cmd="venv:${cmd##*/}"
+        echo -ne "\033]0;${TERMINAL_TYPE}-$cmd\007"
+        return
+    fi
+
+    # 如果命令长度超过20个字符，只显示前17个字符并加上省略号
+    if [[ ${#cmd} -gt 20 ]]; then
+        cmd="${cmd:0:17}..."
+    fi
+
+    # 使用 ANSI escape codes 设置终端标题
+    echo -ne "\033]0;${TERMINAL_TYPE}-$cmd\007"
+}
+alias exit='echo -ne "\033]0;WSL Disconnected\007"; exit'
+# 在命令执行之后计算用时并存储到全局变量中
+precmd() {
+    if [[ -n $start_time ]]; then
+        use_time=$(print_use_time)
+    fi
+    start_time=""  # 重置 start_time
+}
+
+# 打印用时的函数，增加毫秒的精度，并根据执行时间的长短来调整显示格式
+print_use_time() {
+    if [[ -n $start_time ]]; then
+        local end_time=$EPOCHREALTIME
+        # 使用 awk 进行浮点数计算
+        local elapsed_time=$(awk "BEGIN {print ($end_time - $start_time)}")
+        local total_seconds=$(awk "BEGIN {printf \"%.1f\", ($elapsed_time)}")
+
+        # 对于非常短的命令执行时间，直接以秒显示
+        if (( $(awk "BEGIN {print ($total_seconds < 60) ? 1 : 0}") )); then
+            echo "take ${total_seconds}s"  # 在 "take" 和 "$total_seconds" 之间加了一个空格
+        else
+            local hours=$(awk "BEGIN {print int($total_seconds/3600)}")
+            local minutes=$(awk "BEGIN {print int(($total_seconds/60)%60)}")
+            local seconds=$(awk "BEGIN {printf \"%.1f\", ($total_seconds%60)}")
+            local formatted_duration="take "  # 在 "take" 后加了一个空格
+
+            [[ $hours -gt 0 ]] && formatted_duration+="${hours}h"
+            [[ $minutes -gt 0 ]] && formatted_duration+="${minutes}m"
+            formatted_duration+="${seconds}s"
+
+            echo $formatted_duration
+        fi
+    else
+        echo ""
+    fi
+}
+
+# 依赖于bira主题的四个函数，这里只放git_prompt_info函数，其他留空。只为确保zsh不报错，无其他作用
+function ruby_prompt_info() {
+    # Your function definition here...
+}
+
+function git_prompt_info() {
+  ref=$(command git symbolic-ref HEAD 2> /dev/null) || \
+  ref=$(command git rev-parse --short HEAD 2> /dev/null) || return 0
+  echo "%{$fg[yellow]%}(${ref#refs/heads/})%{$reset_color%}"
+}
+
+function hg_prompt_info() {
+    # Your function definition here...
+}
+
+function virtualenv_prompt_info() {
+    # Your function definition here...
+}
+
+#终端提示符配置：包含zsh主题，git检测，python虚拟环境名称，命令执行用时检测，时间戳等信息
+PROMPT='╭─%{$fg_bold[green]%}%n@%m %{$fg_bold[red]%}%~ $(git_prompt_info)$(git_custom_status)%{   %}%F{cyan}${use_time}%f   %F{yellow}UTC+8 %*%f
+╰─$%F{cyan}${VIRTUAL_ENV:+(`basename $VIRTUAL_ENV`)}%f '
+
+#zsh自带性能分析工具（必须放在zshrc最后面）
+#zprof
