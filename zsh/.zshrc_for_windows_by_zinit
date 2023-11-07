@@ -10,7 +10,7 @@ zinit ice lucid wait='3' atinit='zpcompinit' atclone='!' atpull='!'
 zinit light zdharma/fast-syntax-highlighting
 
 # 自动建议
-zinit ice lucid wait="0" atload='_zsh_autosuggest_start' atclone='!' atpull='!'
+zinit ice lucid wait="1" atload='_zsh_autosuggest_start' atclone='!' atpull='!'
 zinit light zsh-users/zsh-autosuggestions
 
 # 补全
@@ -22,12 +22,16 @@ zinit ice wait='2' lucid nocd atclone='!' atpull='!'
 zinit light rupa/z
 
 # 加载 OMZ 框架及部分插件
+#加载OMZ框架
 zinit ice atclone='!' atpull='!'
 zinit snippet OMZ::lib/completion.zsh
 zinit snippet OMZ::lib/history.zsh
 zinit snippet OMZ::lib/key-bindings.zsh
 zinit snippet OMZ::lib/theme-and-appearance.zsh
+#延迟加载OMZ部分插件
+zinit ice lucid wait='4' atclone='!' atpull='!'
 zinit snippet OMZ::plugins/colored-man-pages/colored-man-pages.plugin.zsh
+zinit ice lucid wait='4' atclone='!' atpull='!'
 zinit snippet OMZ::plugins/sudo/sudo.plugin.zsh
 
 # 加载Git插件
@@ -67,6 +71,7 @@ ZSH_THEME_GIT_PROMPT_DIRTY=""
 
 # python虚拟环境自动激活与关闭相关配置
 auto_venv() {
+
   local target_dir="$PWD"
   local venv_path=""
   local parent_dir
@@ -226,3 +231,5 @@ PROMPT='╭─%{$fg_bold[green]%}%n@%m %{$fg_bold[red]%}%~ $(git_prompt_info)$(g
 
 #zsh自带性能分析工具（必须放在zshrc最后面）
 #zprof
+
+setopt correct_all
