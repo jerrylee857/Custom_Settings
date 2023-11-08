@@ -1,5 +1,5 @@
 ##zsh自带性能分析工具（必须放在.zshrc最前面）
-zmodload zsh/zprof
+#zmodload zsh/zprof
 
 ### Added by Zinit's installer
 if [[ ! -f $HOME/.local/share/zinit/zinit.git/zinit.zsh ]]; then
@@ -34,22 +34,42 @@ zinit light zsh-users/zsh-completions
 zinit ice wait='3' lucid nocd atclone='!' atpull='!'
 zinit light rupa/z
 
+#模糊查询(fzf测试中)
+#zinit ice lucid wait='6'
+#zinit load OMZ::plugins/fzf/fzf.plugin.zsh
+#export FZF_BASE=/path/to/fzf/install/dir
+
 ## 加载 OMZ 框架及部分插件
+
 #加载OMZ框架和部分库
 zinit ice atclone='!' atpull='!'
 zinit snippet OMZ::lib/completion.zsh
+
 zinit snippet OMZ::lib/history.zsh
+
+zinit ice lucid wait='8'
 zinit snippet OMZ::lib/key-bindings.zsh
+
 zinit snippet OMZ::lib/theme-and-appearance.zsh
 zinit snippet OMZ::lib/git.zsh
+
+zinit ice lucid wait='9'
 zinit snippet OMZ::lib/clipboard.zsh
 #延迟加载OMZ部分插件
 zinit ice lucid wait='6' atclone='!' atpull='!'
 zinit snippet OMZ::plugins/colored-man-pages/colored-man-pages.plugin.zsh
+
 zinit ice lucid wait='7' atclone='!' atpull='!'
 zinit snippet OMZ::plugins/sudo/sudo.plugin.zsh
+
 zinit ice lucid wait='1' atclone='!' atpull='!'
 zinit snippet OMZ::plugins/git/git.plugin.zsh
+
+zinit ice lucid wait='2'
+zinit snippet OMZ:: plugins/fig/fig.plugin.zsh
+
+zinit ice lucid wait='2'
+zinit snippet OMZ::plugins/git-auto-fetch/git-auto-fetch.plugin.zsh
 
 # 加载 Oh My Zsh的bira主题
 zinit snippet OMZ::themes/bira.zsh-theme
@@ -242,7 +262,7 @@ PROMPT='╭─%{$fg_bold[green]%}%n@%m %{$fg_bold[red]%}%~ $(git_prompt_info)$(g
 ╰─$%F{cyan}${VIRTUAL_ENV:+(`basename $VIRTUAL_ENV`)}%f '
 
 #zsh自带纠错功能
-setopt correct_all
+#setopt correct_all
 
 #zsh自带性能分析工具（必须放在zshrc最后面）
-zprof
+#zprof
