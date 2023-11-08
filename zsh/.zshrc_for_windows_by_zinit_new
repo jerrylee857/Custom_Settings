@@ -1,5 +1,5 @@
 ##zsh自带性能分析工具（必须放在.zshrc最前面）
-#zmodload zsh/zprof
+zmodload zsh/zprof
 
 ### Added by Zinit's installer
 if [[ ! -f $HOME/.local/share/zinit/zinit.git/zinit.zsh ]]; then
@@ -19,11 +19,11 @@ autoload -Uz _zinit
 ##插件管理
 
 # 语法高亮
-zinit ice lucid wait='3' atinit='zpcompinit' atclone='!' atpull='!'
+zinit ice lucid wait='5' atinit='zpcompinit' atclone='!' atpull='!'
 zinit light zdharma/fast-syntax-highlighting
 
 # 自动建议
-zinit ice lucid wait="1" atload='_zsh_autosuggest_start' atclone='!' atpull='!'
+zinit ice lucid wait="2" atload='_zsh_autosuggest_start' atclone='!' atpull='!'
 zinit light zsh-users/zsh-autosuggestions
 
 # 补全
@@ -31,29 +31,28 @@ zinit ice lucid wait='0' atclone='!' atpull='!'
 zinit light zsh-users/zsh-completions
 
 # 快速跳转目录
-zinit ice wait='2' lucid nocd atclone='!' atpull='!'
+zinit ice wait='3' lucid nocd atclone='!' atpull='!'
 zinit light rupa/z
 
-# 加载 OMZ 框架及部分插件
-#加载OMZ框架
+## 加载 OMZ 框架及部分插件
+#加载OMZ框架和部分库
 zinit ice atclone='!' atpull='!'
 zinit snippet OMZ::lib/completion.zsh
 zinit snippet OMZ::lib/history.zsh
 zinit snippet OMZ::lib/key-bindings.zsh
 zinit snippet OMZ::lib/theme-and-appearance.zsh
+zinit snippet OMZ::lib/git.zsh
+zinit snippet OMZ::lib/clipboard.zsh
 #延迟加载OMZ部分插件
-zinit ice lucid wait='4' atclone='!' atpull='!'
+zinit ice lucid wait='6' atclone='!' atpull='!'
 zinit snippet OMZ::plugins/colored-man-pages/colored-man-pages.plugin.zsh
-zinit ice lucid wait='4' atclone='!' atpull='!'
+zinit ice lucid wait='7' atclone='!' atpull='!'
 zinit snippet OMZ::plugins/sudo/sudo.plugin.zsh
-
-# 加载Git插件
 zinit ice lucid wait='1' atclone='!' atpull='!'
 zinit snippet OMZ::plugins/git/git.plugin.zsh
 
 # 加载 Oh My Zsh的bira主题
-zinit ice from"gh" as"theme" pick"themes/bira.zsh-theme"
-zinit load robbyrussell/oh-my-zsh
+zinit snippet OMZ::themes/bira.zsh-theme
 
 # 适用于windwos主机中的bash/zsh终端的代理设置
 export http_proxy="http://127.0.0.1:10809"
@@ -246,5 +245,4 @@ PROMPT='╭─%{$fg_bold[green]%}%n@%m %{$fg_bold[red]%}%~ $(git_prompt_info)$(g
 setopt correct_all
 
 #zsh自带性能分析工具（必须放在zshrc最后面）
-#zprof
-
+zprof
