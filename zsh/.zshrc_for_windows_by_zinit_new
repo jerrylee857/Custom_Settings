@@ -68,9 +68,6 @@ zinit snippet OMZ::plugins/git/git.plugin.zsh
 zinit ice lucid wait='2'
 zinit snippet OMZ:: plugins/fig/fig.plugin.zsh
 
-zinit ice lucid wait='2'
-zinit snippet OMZ::plugins/git-auto-fetch/git-auto-fetch.plugin.zsh
-
 # 加载 Oh My Zsh的bira主题
 zinit snippet OMZ::themes/bira.zsh-theme
 
