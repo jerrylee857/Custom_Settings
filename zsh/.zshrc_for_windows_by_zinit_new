@@ -65,8 +65,8 @@ zinit snippet OMZ::plugins/sudo/sudo.plugin.zsh
 zinit ice lucid wait='1' atclone='!' atpull='!'
 zinit snippet OMZ::plugins/git/git.plugin.zsh
 
-zinit ice lucid wait='2'
-zinit snippet OMZ:: plugins/fig/fig.plugin.zsh
+#zinit ice lucid wait='2'(测试中）
+#zinit snippet OMZ:: plugins/fig/fig.plugin.zsh
 
 # 加载 Oh My Zsh的bira主题
 zinit snippet OMZ::themes/bira.zsh-theme
