@@ -19,6 +19,7 @@ sudo apt install zsh
 ## zimfw 搭配p10k 使用也比较方便，且zimfw 自带了autusuggestions 和highlighting 插件，无需单独再去下载。
 ## zinit 使用起来速度性能最好，且配置也很灵活。但是一些命令参数很多，且配置起来比较复杂。
 
+
 ##oy-my-zh 安装配置
 
 #安装Oh My Zsh(可直接通过复制脚本内容来安装)
@@ -35,4 +36,71 @@ source ~/.zshrc
 
 
 ## zimfw安装配置
+
+#安装zimfw,推荐使用脚本自动安装
+curl -fsSL https://raw.githubusercontent.com/zimfw/install/master/install.zsh | zsh
+#脚本会自动在~目录创建.zimrc文件，其中包含了zimfw自带的常用插件，可自己在.zimrc中添加自定义的插件（module)
+
+#安装或者卸载自定义插件
+zimfw install   #执行自动下载并安装(.zimrc中自定义的插件）     zimfw uninstall #执行后会卸载.zim/modules目录下的插件 
+
+#更新
+zimfw update   #自动更新已安装的所有插件
+zimfw upgrade  #zimfw 自更新
+
+
+## zinit 
+
+#原zinit 已删库，目前的zinit是由社区维护的，仓库名字为zdharma-continuum/zinit
+
+#使用脚本自动安装 
+bash -c "$(curl --fail --show-error --silent --location https://raw.githubusercontent.com/zdharma-continuum/zinit/HEAD/scripts/install.sh)"
+
+#下载并安装插件
+zinit load  <repo/plugin> # Load with reporting/investigating.
+zinit light <repo/plugin> # Load without reporting/investigating.
+zinit snippet  #zinit snippet https://gist.githubusercontent.com/hightemp/5071909/raw/(可用来下载单个文件}
+#Turbo加速模式 
+zinit ice wait    # wait is the same as wait"0"
+zinit load zdharma-continuum/history-search-multi-word
+
+zinit ice wait"2" # load after 2 seconds
+zinit load zdharma-continuum/history-search-multi-word
+
+zinit ice wait    # also be used in `light` and `snippet`
+zinit snippet https://gist.githubusercontent.com/hightemp/5071909/raw/
+#更新
+
+# Self update
+zinit self-update
+
+# Plugin update
+zinit update
+
+# Plugin parallel update
+zinit update --parallel
+
+# Increase the number of jobs in a concurrent-set to 40
+zinit update --parallel 40
+
+
+
+## p10k主题 
+
+#需安装特定字体   否则会乱码
+#安装
+
+#oh-my-zsh 下
+git clone --depth=1 https://gitee.com/romkatv/powerlevel10k.git ${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/themes/powerlevel10k
+
+#zinit 下
+Add zinit ice depth=1; zinit light romkatv/powerlevel10k to ~/.zshrc
+
+#zimfw  下
+Add zmodule romkatv/powerlevel10k --use degit to ~/.zimrc and run zimfw install
+
+#配置  
+p10k configure
+
+#~目录下会有一个.p10k文件   为p10k的自定义配置文件
 
