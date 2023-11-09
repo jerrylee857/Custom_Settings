@@ -1,26 +1,5 @@
 #先安装zsh   然后安装pyenv更方便
 
-zsh
-
-1.安装zsh
-sudo apt-get update
-sudo apt-get install zsh
-
-2.安装Oh My Zsh(可直接通过复制脚本内容来安装)
-sh -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
-
-3.安装zsh-autosuggestions插件和zsh-syntax-highlighting插件：
-git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions
-git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting
-
-4.打开~/.zshrc文件，并在plugins=(...)部分添加zsh-syntax-highlighting和 zsh-autosuggestions
-plugins=(git zsh-autosuggestions zsh-syntax-highlighting z)
-
-5.重加载zshrc
-source ~/.zshrc
-
-
-
 pyenv
 
 

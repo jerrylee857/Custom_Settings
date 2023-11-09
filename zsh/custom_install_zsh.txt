@@ -1,0 +1,38 @@
+###安装zsh 
+
+##ubuntu
+
+sudo apt update
+sudo apt install zsh
+
+#然后将zsh设为默认终端
+
+##windows 
+
+安装Git for Windows，然后下载zsh for windows的（MSY32包）并将其复制且覆盖到Git的根目录下
+
+
+
+###安装一些常用且性能较好的适用于zsh的框架或者插件主题,经过测试，oh-my-zsh比较适合开箱即用。
+
+## oh-my-zsh单独使用会导致zsh终端启动速度特别慢，因此搭配p10k主题使用更有效率。  
+## zimfw 搭配p10k 使用也比较方便，且zimfw 自带了autusuggestions 和highlighting 插件，无需单独再去下载。
+## zinit 使用起来速度性能最好，且配置也很灵活。但是一些命令参数很多，且配置起来比较复杂。
+
+##oy-my-zh 安装配置
+
+#安装Oh My Zsh(可直接通过复制脚本内容来安装)
+sh -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+
+#安装zsh-autosuggestions插件和zsh-syntax-highlighting插件：
+git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestio>git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-synta>
+
+#打开~/.zshrc文件，并在plugins=(...)部分添加zsh-syntax-highlighting和 zsh-autosuggestions
+plugins=(git zsh-autosuggestions zsh-syntax-highlighting z)
+
+#重加载zshrc
+source ~/.zshrc
+
+
+## zimfw安装配置
+
