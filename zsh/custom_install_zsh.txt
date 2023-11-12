@@ -6,7 +6,7 @@ sudo apt update
 sudo apt install zsh
 
 #然后将zsh设为默认终端
-
+chsh -s $(which zsh)
 ##windows 
 
 安装Git for Windows，然后下载zsh for windows的（MSY32包）并将其复制且覆盖到Git的根目录下
