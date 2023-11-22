@@ -16,60 +16,68 @@ autoload -Uz _zinit
 ### End of Zinit's installer chunk
 ### End of Zinit's installer chunk
 
+
 ##插件管理
 
 # 语法高亮
-zinit ice lucid wait='5' atinit='zpcompinit' atclone='!' atpull='!'
-zinit light zdharma/fast-syntax-highlighting
+zinit ice lucid wait='0' 
+zinit light zdharma-continuum/fast-syntax-highlighting
 
 # 自动建议
-zinit ice lucid wait="2" atload='_zsh_autosuggest_start' atclone='!' atpull='!'
+zinit ice lucid wait="0" atload='_zsh_autosuggest_start'
 zinit light zsh-users/zsh-autosuggestions
 
 # 补全
-zinit ice lucid wait='0' atclone='!' atpull='!'
+zinit ice lucid wait='0'
 zinit light zsh-users/zsh-completions
 
 # 快速跳转目录
-zinit ice wait='3' lucid nocd atclone='!' atpull='!'
+zinit ice wait='0' lucid nocd atclone='!' atpull='!'
 zinit light rupa/z
 
-#模糊查询(fzf测试中)
-#zinit ice lucid wait='6'
-#zinit load OMZ::plugins/fzf/fzf.plugin.zsh
-#export FZF_BASE=/path/to/fzf/install/dir
+# 多词搜索
+zinit ice wait='6' lucid 
+zinit load zdharma-continuum/history-search-multi-word
+
+#模糊查询fzf(只适用于windows环境)
+zinit ice as"program" from"gh-r" pick"fzf/bin/fzf.exe" bpick"*windows_amd64.zip" wait"6" lucid
+zinit load junegunn/fzf
+#模糊查询fzf(适用于linux环境)
+#zinit ice as"program" from"gh-r" pick"./bin/fzf"
+#zinit light junegunn/fzf
 
 ## 加载 OMZ 框架及部分插件
 
 #加载OMZ框架和部分库
-zinit ice atclone='!' atpull='!'
+zinit ice lucid wait='8'
 zinit snippet OMZ::lib/completion.zsh
 
 zinit snippet OMZ::lib/history.zsh
 
-zinit ice lucid wait='8'
+zinit ice lucid wait='9'
 zinit snippet OMZ::lib/key-bindings.zsh
 
 zinit snippet OMZ::lib/theme-and-appearance.zsh
 zinit snippet OMZ::lib/git.zsh
 
-zinit ice lucid wait='9'
+zinit ice lucid wait='10'
 zinit snippet OMZ::lib/clipboard.zsh
-#延迟加载OMZ部分插件
-zinit ice lucid wait='6' atclone='!' atpull='!'
-zinit snippet OMZ::plugins/colored-man-pages/colored-man-pages.plugin.zsh
-
-zinit ice lucid wait='7' atclone='!' atpull='!'
-zinit snippet OMZ::plugins/sudo/sudo.plugin.zsh
-
-zinit ice lucid wait='1' atclone='!' atpull='!'
-zinit snippet OMZ::plugins/git/git.plugin.zsh
-
-#zinit ice lucid wait='2'(测试中）
-#zinit snippet OMZ:: plugins/fig/fig.plugin.zsh
 
 # 加载 Oh My Zsh的bira主题
 zinit snippet OMZ::themes/bira.zsh-theme
+
+#延迟加载OMZ部分插件
+zinit ice lucid wait='11' 
+zinit snippet OMZ::plugins/colored-man-pages/colored-man-pages.plugin.zsh
+
+zinit ice lucid wait='12'
+zinit snippet OMZ::plugins/sudo/sudo.plugin.zsh
+
+zinit ice lucid wait='1' 
+zinit snippet OMZ::plugins/git/git.plugin.zsh
+
+
+###环境变量设置
 
 # 适用于windwos主机中的bash/zsh终端的代理设置
 export http_proxy="http://127.0.0.1:10809"
@@ -78,13 +86,17 @@ export https_proxy="http://127.0.0.1:10809"
 # 加速pyenv下载python的源设置
 export PYTHON_BUILD_MIRROR_URL_SKIP_CHECKSUM=1
 export PYTHON_BUILD_MIRROR_URL="https://registry.npmmirror.com/-/binary/python"
+
+#不输出python虚拟环境提示
 export VIRTUAL_ENV_DISABLE_PROMPT=1
+
+
 
 #禁止zsh终端自动更新标题
 DISABLE_AUTO_TITLE="true"
 
-# 下面是zsh主题提示符、自动检测git、虚拟环境的自动开启与关闭、代码执行用时、windows terminal选项卡标题的自动更新等配置
-# Git相关配置
+### 下面是zsh主题提示符、自动检测git、虚拟环境的自动开启与关闭、代码执行用时、windows terminal选项卡标题的自动更新等配置
+## Git相关配置
 git_custom_status() {
     if git rev-parse --is-inside-work-tree &>/dev/null; then
         local STATUS="$(git status --porcelain 2> /dev/null)"
@@ -98,7 +110,7 @@ git_custom_status() {
 ZSH_THEME_GIT_PROMPT_CLEAN=""
 ZSH_THEME_GIT_PROMPT_DIRTY=""
 
-# python虚拟环境自动激活与关闭相关配置
+## python虚拟环境自动激活与关闭相关配置
 auto_venv() {
 
   local target_dir="$PWD"
@@ -156,7 +168,7 @@ cmd_status_indicator() {
     echo "%{$color%}●%f"
 }
 
-#代码执行用时脚本与windows terminal中选项卡的自动捕获与更新（preexec函数只能合二为一否则windows terminal标题更新出错）
+##代码执行用时脚本与windows terminal中选项卡的自动捕获与更新（preexec函数只能合二为一否则windows terminal标题更新出错）
 # 合并后的 preexec 函数
 preexec() {
     local cmd="$1"
@@ -254,12 +266,12 @@ function virtualenv_prompt_info() {
     # Your function definition here...
 }
 
-#终端提示符配置：包含zsh主题，git检测，python虚拟环境名称，命令执行用时检测，时间戳，命令状态提示圆点等信息
+##终端提示符配置：包含zsh主题，git检测，python虚拟环境名称，命令执行用时检测，时间戳，命令状态提示圆点等信息
 PROMPT='╭─%{$fg_bold[green]%}%n@%m %{$fg_bold[red]%}%~ $(git_prompt_info)$(git_custom_status)%{   %}%F{cyan}${use_time}%f %{${cmd_status}%}  %F{yellow}UTC+8 %*%f
 ╰─$%F{cyan}${VIRTUAL_ENV:+(`basename $VIRTUAL_ENV`)}%f '
 
-#zsh自带纠错功能
+##zsh自带纠错功能
 #setopt correct_all
 
-#zsh自带性能分析工具（必须放在zshrc最后面）
+##zsh自带性能分析工具（必须放在zshrc最后面）
 #zprof
