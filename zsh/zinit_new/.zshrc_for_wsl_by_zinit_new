@@ -19,59 +19,64 @@ autoload -Uz _zinit
 ##插件管理
 
 # 语法高亮
-zinit ice lucid wait='5' atinit='zpcompinit' atclone='!' atpull='!'
-zinit light zdharma/fast-syntax-highlighting
+zinit ice lucid wait='0' 
+zinit light zdharma-continuum/fast-syntax-highlighting
 
 # 自动建议
-zinit ice lucid wait="2" atload='_zsh_autosuggest_start' atclone='!' atpull='!'
+zinit ice lucid wait="0" atload='_zsh_autosuggest_start'
 zinit light zsh-users/zsh-autosuggestions
 
 # 补全
-zinit ice lucid wait='0' atclone='!' atpull='!'
+zinit ice lucid wait='0'
 zinit light zsh-users/zsh-completions
 
 # 快速跳转目录
-zinit ice wait='3' lucid nocd atclone='!' atpull='!'
+zinit ice wait='0' lucid nocd atclone='!' atpull='!'
 zinit light rupa/z
 
-#模糊查询(fzf测试中)
-#zinit ice lucid wait='6'
-#zinit load OMZ::plugins/fzf/fzf.plugin.zsh
-#export FZF_BASE=/path/to/fzf/install/dir
+# 多词搜索
+zinit ice wait='6' lucid 
+zinit load zdharma-continuum/history-search-multi-word
+
+#模糊查询fzf(只适用于windows环境)
+#zinit ice as"program" from"gh-r" pick"fzf/bin/fzf.exe" bpick"*windows_amd64.zip" wait"6" lucid
+#zinit load junegunn/fzf
+#模糊查询fzf(适用于linux环境)
+zinit ice as"program" from"gh-r" pick"./bin/fzf"
+zinit light junegunn/fzf
 
 ## 加载 OMZ 框架及部分插件
 
 #加载OMZ框架和部分库
-zinit ice atclone='!' atpull='!'
+zinit ice lucid wait='8'
 zinit snippet OMZ::lib/completion.zsh
 
 zinit snippet OMZ::lib/history.zsh
 
-zinit ice lucid wait='8'
+zinit ice lucid wait='9'
 zinit snippet OMZ::lib/key-bindings.zsh
 
 zinit snippet OMZ::lib/theme-and-appearance.zsh
 zinit snippet OMZ::lib/git.zsh
 
-zinit ice lucid wait='9'
+zinit ice lucid wait='10'
 zinit snippet OMZ::lib/clipboard.zsh
-#延迟加载OMZ部分插件
-zinit ice lucid wait='6' atclone='!' atpull='!'
-zinit snippet OMZ::plugins/colored-man-pages/colored-man-pages.plugin.zsh
-
-zinit ice lucid wait='7' atclone='!' atpull='!'
-zinit snippet OMZ::plugins/sudo/sudo.plugin.zsh
-
-zinit ice lucid wait='1' atclone='!' atpull='!'
-zinit snippet OMZ::plugins/git/git.plugin.zsh
-
-#zinit ice lucid wait='2'(测试中）
-#zinit snippet OMZ:: plugins/fig/fig.plugin.zsh
 
 # 加载 Oh My Zsh的bira主题
 zinit snippet OMZ::themes/bira.zsh-theme
 
-#常用的PATH变量
+#延迟加载OMZ部分插件
+zinit ice lucid wait='11' 
+zinit snippet OMZ::plugins/colored-man-pages/colored-man-pages.plugin.zsh
+
+zinit ice lucid wait='12'
+zinit snippet OMZ::plugins/sudo/sudo.plugin.zsh
+
+zinit ice lucid wait='1' 
+zinit snippet OMZ::plugins/git/git.plugin.zsh
+
+###常用的PATH变量
+
 #pyenv和virtualenv
 export PYENV_ROOT="$HOME/.pyenv"
 export PATH="$PYENV_ROOT/bin:$PATH"
@@ -79,14 +84,24 @@ if command -v pyenv 1>/dev/null 2>&1; then
   eval "$(pyenv init --path)"
 fi
 eval "$(pyenv virtualenv-init -)"
-#适用于ssh的nvidia-smi 环境变量
-export PATH=$PATH:/usr/lib/wsl/lib
-#解决wsl2中torch报错：Could not load library libcudnn_cnn_infer.so.8. 的环境变量设置
-export LD_LIBRARY_PATH=/usr/lib/wsl/lib:$LD_LIBRARY_PATH
+
 #加速pyenv下载python的源设置
 export PYTHON_BUILD_MIRROR_URL_SKIP_CHECKSUM=1
 export PYTHON_BUILD_MIRROR_URL="https://registry.npmmirror.com/-/binary/python"
 
+#禁止pyenv-virtualenv显示虚拟环境命令提示符
+export PYENV_VIRTUALENV_DISABLE_PROMPT=1
+
+#适用于ssh的nvidia-smi 环境变量
+export PATH=$PATH:/usr/lib/wsl/lib
+
+#解决wsl2中torch报错：Could not load library libcudnn_cnn_infer.so.8. 的环境变量设置
+export LD_LIBRARY_PATH=/usr/lib/wsl/lib:$LD_LIBRARY_PATH
+
+# WSL代理设置(只适用于windows 23h2版本之前的wsl2)
+#host_ip=$(cat /etc/resolv.conf |grep "nameserver" |cut -f 2 -d " ")
+#export http_proxy="http://$host_ip:10809"
+#export https_proxy="https://$host_ip:10809"
 
 #禁止zsh终端自动更新标题
 DISABLE_AUTO_TITLE="true"
