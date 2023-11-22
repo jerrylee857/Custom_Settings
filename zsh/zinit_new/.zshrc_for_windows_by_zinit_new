@@ -90,6 +90,13 @@ export PYTHON_BUILD_MIRROR_URL="https://registry.npmmirror.com/-/binary/python"
 #不输出python虚拟环境提示
 export VIRTUAL_ENV_DISABLE_PROMPT=1
 
+##zsh history文件变量（适用于git for windows和zsh for windows结合）
+
+# 创建 Zsh 历史文件目录（如果不存在）
+mkdir -p ~/zsh_history_files
+# 设置 Zsh 历史文件变量
+export HISTFILE=~/zsh_history_files/.zsh_history
+
 
 
 #禁止zsh终端自动更新标题
