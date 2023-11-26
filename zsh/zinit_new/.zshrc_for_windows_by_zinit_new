@@ -39,12 +39,16 @@ zinit light rupa/z
 zinit ice wait='6' lucid 
 zinit load zdharma-continuum/history-search-multi-word
 
-#模糊查询fzf(只适用于windows环境)
-zinit ice as"program" from"gh-r" pick"fzf/bin/fzf.exe" bpick"*windows_amd64.zip" wait"6" lucid
+##模糊查询fzf(只适用于windows环境)
+zinit ice as"program" from"gh-r" pick"fzf/bin/fzf.exe" bpick"*windows_amd64.zip" wait"0" lucid
 zinit load junegunn/fzf
 #模糊查询fzf(适用于linux环境)
 #zinit ice as"program" from"gh-r" pick"./bin/fzf"
 #zinit light junegunn/fzf
+#fzf开启预览窗口(两种方法皆可）
+#export FZF_DEFAULT_OPTS='--preview "cat {}" --preview-window right:50%'
+alias fzf='fzf --preview "cat {}" --preview-window right:50%'
+
 
 ## 加载 OMZ 框架及部分插件
 
@@ -90,13 +94,12 @@ export PYTHON_BUILD_MIRROR_URL="https://registry.npmmirror.com/-/binary/python"
 #不输出python虚拟环境提示
 export VIRTUAL_ENV_DISABLE_PROMPT=1
 
-##zsh history文件变量（适用于git for windows和zsh for windows结合）
+##zsh history文件变量
 
 # 创建 Zsh 历史文件目录（如果不存在）
 mkdir -p ~/zsh_history_files
 # 设置 Zsh 历史文件变量
 export HISTFILE=~/zsh_history_files/.zsh_history
-
 
 
 #禁止zsh终端自动更新标题

@@ -44,6 +44,10 @@ zinit load zdharma-continuum/history-search-multi-word
 #模糊查询fzf(适用于linux环境)
 zinit ice as"program" from"gh-r" pick"./bin/fzf"
 zinit light junegunn/fzf
+#fzf开启预览窗口(两种方法皆可）
+#export FZF_DEFAULT_OPTS='--preview "cat {}" --preview-window right:50%'
+alias fzf='fzf --preview "cat {}" --preview-window right:50%'
+
 
 ## 加载 OMZ 框架及部分插件
 
