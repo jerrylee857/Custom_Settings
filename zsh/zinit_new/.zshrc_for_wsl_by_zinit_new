@@ -282,8 +282,7 @@ function virtualenv_prompt_info() {
 
 #终端提示符配置：包含zsh主题，git检测，python虚拟环境名称，命令执行用时检测，时间戳，命令状态提示圆点等信息
 PROMPT='╭─%{$fg_bold[green]%}%n@%m %{$fg_bold[red]%}%~ $(git_prompt_info)$(git_custom_status)%{   %}%F{cyan}${use_time}%f %{${cmd_status}%}  %F{yellow}UTC+8 %*%f
-╰─$%F{cyan}${VIRTUAL_ENV:+(`basename $VIRTUAL_ENV`)}%f '
-
+╰─$%F{cyan}${CONDA_DEFAULT_ENV:+($CONDA_DEFAULT_ENV)}${VIRTUAL_ENV:+(`basename $VIRTUAL_ENV`)}%f '
 #zsh自带纠错功能
 #setopt correct_all
 
