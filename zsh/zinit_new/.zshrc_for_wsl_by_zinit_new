@@ -19,7 +19,7 @@ autoload -Uz _zinit
 ##插件管理
 
 # 语法高亮
-zinit ice lucid wait='0' 
+zinit ice lucid wait='0'
 zinit light zdharma-continuum/fast-syntax-highlighting
 
 # 自动建议
@@ -35,7 +35,7 @@ zinit ice wait='0' lucid nocd atclone='!' atpull='!'
 zinit light rupa/z
 
 # 多词搜索
-zinit ice wait='6' lucid 
+zinit ice wait='6' lucid
 zinit load zdharma-continuum/history-search-multi-word
 
 #模糊查询fzf(只适用于windows环境)
@@ -70,13 +70,13 @@ zinit snippet OMZ::lib/clipboard.zsh
 zinit snippet OMZ::themes/bira.zsh-theme
 
 #延迟加载OMZ部分插件
-zinit ice lucid wait='11' 
+zinit ice lucid wait='11'
 zinit snippet OMZ::plugins/colored-man-pages/colored-man-pages.plugin.zsh
 
 zinit ice lucid wait='12'
 zinit snippet OMZ::plugins/sudo/sudo.plugin.zsh
 
-zinit ice lucid wait='1' 
+zinit ice lucid wait='1'
 zinit snippet OMZ::plugins/git/git.plugin.zsh
 
 ###常用的PATH变量
@@ -107,6 +107,20 @@ export LD_LIBRARY_PATH=/usr/lib/wsl/lib:$LD_LIBRARY_PATH
 #export http_proxy="http://$host_ip:10809"
 #export https_proxy="https://$host_ip:10809"
 
+#nvm环境变量
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+
+#wsl中文输入法环境变量
+export GTK_IM_MODULE=fcitx
+export QT_IM_MODULE=fcitx
+export XMODIFIERS=@im=fcitx
+export SDL_IM_MODULE=fcitx
+export GLFW_IM_MODULE=ibus
+
+fcitx5 --disable=wayland -d  --verbose '*'=0
+
 #禁止zsh终端自动更新标题
 DISABLE_AUTO_TITLE="true"
 
@@ -133,8 +147,8 @@ auto_venv() {
   local parent_dir
 
   while [[ "$target_dir" != "/" ]]; do
-    # 搜索深度为2的Scripts目录，并忽略权限错误
-    venv_path="$(find "$target_dir" -maxdepth 2 -type d -name 'Scripts' -exec test -f '{}/activate' \; -print -quit 2>/dev/null)"
+    # 搜索深度为2的Scripts或者bin目录，并忽略权限错误
+    venv_path="$(find "$target_dir" \( -maxdepth 2 -type d -name 'Scripts' -or -name 'bin' \) -exec test -f '{}/activate' \; -print -quit 2>/dev/null)"
     if [[ -n "$venv_path" ]]; then
       break
     fi
@@ -186,7 +200,7 @@ cmd_status_indicator() {
 #代码执行用时脚本与windows terminal中选项卡的自动捕获与更新（preexec函数只能合二为一否则windows terminal标题更新出错）
 # 合并后的 preexec 函数
 #动态更新windows terminal中的选项卡标题
-export TERMINAL_TYPE="HGWSL2"
+export TERMINAL_TYPE="32GWSL2"
 preexec() {
     local cmd="$1"
 
@@ -216,7 +230,7 @@ preexec() {
     # 使用 ANSI escape codes 设置终端标题
     echo -ne "\033]0;${TERMINAL_TYPE}-$cmd\007"
 }
-alias exit='echo -ne "\033]0;HGWSL2 Disconnected\007"; exit'
+alias exit='echo -ne "\033]0;32GWSL2 Disconnected\007"; exit'
 
 # 计算用时和命令执行状态的变量
 precmd() {
@@ -287,8 +301,23 @@ function virtualenv_prompt_info() {
 #终端提示符配置：包含zsh主题，git检测，python虚拟环境名称，命令执行用时检测，时间戳，命令状态提示圆点等信息
 PROMPT='╭─%{$fg_bold[green]%}%n@%m %{$fg_bold[red]%}%~ $(git_prompt_info)$(git_custom_status)%{   %}%F{cyan}${use_time}%f %{${cmd_status}%}  %F{yellow}UTC+8 %*%f
 ╰─$%F{cyan}${CONDA_DEFAULT_ENV:+($CONDA_DEFAULT_ENV)}${VIRTUAL_ENV:+(`basename $VIRTUAL_ENV`)}%f '
+
 #zsh自带纠错功能
 #setopt correct_all
+
+#自定义alias链接
+alias pmp='python manage.py'
+alias ls='ls --color=auto'
+#alias dir='dir --color=auto'
+#alias vdir='vdir --color=auto'
+alias grep='grep --color=auto'
+alias fgrep='fgrep --color=auto'
+alias egrep='egrep --color=auto'
+alias diff='diff --color=auto'
+alias ip='ip --color=auto'
+alias ll='ls -l'
+alias la='ls -A'
+alias l='ls -CF'
 
 #zsh自带性能分析工具（必须放在zshrc最后面）
 #zprof
