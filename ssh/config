@@ -17,23 +17,7 @@ Host 本地win10_ubuntu2004
   Port 22
   IdentityFile ~/.ssh/id_ed25519
   ForwardX11 yes
-  ForwardX11Trusted yes
-
-
-Host hw
-  HostName 110.41.13.209
-  User hwlwg2004
-  Port 23556
-  IdentityFile ~/.ssh/id_ed25519
-  ForwardX11 yes
-  ForwardX11Trusted yes
-  
-Host azure4
-  HostName 20.210.231.84
-  User azure4
-  Port 23556
-  IdentityFile ~/.ssh/id_ed25519
-  
+  ForwardX11Trusted 
 
 Host vbu20s
   HostName 192.168.1.888
